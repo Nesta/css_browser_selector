@@ -12,6 +12,26 @@ https://github.com/verbatim/css_browser_selector
 showLog=true;
 function log(m) {if ( window.console && showLog ) {console.log(m); }  }
 
+function getInternetExplorerVersion()
+{
+  var rv = -1;
+  if (navigator.appName == 'Microsoft Internet Explorer')
+  {
+    var ua = navigator.userAgent;
+    var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+      rv = parseFloat( RegExp.$1 );
+  }
+  else if (navigator.appName == 'Netscape')
+  {
+    var ua = navigator.userAgent;
+    var re  = new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+      rv = parseFloat( RegExp.$1 );
+  }
+  return rv;
+}
+
 function css_browser_selector(u)
 	{
 	var	uaInfo = {},
@@ -40,7 +60,7 @@ function css_browser_selector(u)
 		b=	[
 		
 			// browser
-			(!(/opera|webtv|firefox/i.test(ua))&&/trident|msie/i.test(ua)&&/(msie\s|rv\:)(\d+)/.test(ua))?('ie ie'+(/trident\/4\.0/.test(ua) ? '8' : RegExp.$2))
+			(!(/opera|webtv/i.test(ua)) && /msie\s(\d)/.test(ua)) ? ('ie ie' + getInternetExplorerVersion())
 			:is('firefox/')?g+ " " + f+(/firefox\/((\d+)(\.(\d+))(\.\d+)*)/.test(ua)?' '+f+RegExp.$2 + ' '+f+RegExp.$2+"_"+RegExp.$4:'')	
 			:is('gecko/')?g
 			:is('opera')?o+(/version\/((\d+)(\.(\d+))(\.\d+)*)/.test(ua)?' '+o+RegExp.$2 + ' '+o+RegExp.$2+"_"+RegExp.$4 : (/opera(\s|\/)(\d+)\.(\d+)/.test(ua)?' '+o+RegExp.$2+" "+o+RegExp.$2+"_"+RegExp.$3:''))
@@ -151,6 +171,11 @@ function css_browser_selector(u)
 	return cssbs;
 	}
 	
-css_browser_selector(navigator.userAgent);
+if (getInternetExplorerVersion() == '11' || getInternetExplorerVersion() == '10') {
+	css_browser_selector("Mozilla/x.x (compatible; MSIE 1x.0; Windows NT x.x; Trident/x.x)");
+} else {
+	css_browser_selector(navigator.userAgent);
+}
+
 
 
